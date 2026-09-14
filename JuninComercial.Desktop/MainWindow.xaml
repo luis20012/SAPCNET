@@ -1,0 +1,55 @@
+<Window x:Class="JuninComercial.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuninComercial.Desktop"
+        mc:Ignorable="d"
+        Title="JuninComercial - Directorio Inteligente" Height="600" Width="800">
+    <DockPanel>
+        <!-- Equivalente al <top><MenuBar> de primary.fxml -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Archivo">
+                <MenuItem Header="_Cerrar" Click="MenuCerrar_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Editar">
+                <MenuItem Header="Eliminar _Comercio"/>
+            </MenuItem>
+            <MenuItem Header="_Mantenimiento">
+                <MenuItem Header="_Países" Click="MenuPaises_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Ayuda">
+                <MenuItem Header="_Acerca de"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Equivalente al <center><VBox> de primary.fxml -->
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="JuninComercial"
+                       FontSize="24" FontWeight="Bold"
+                       HorizontalAlignment="Center" Margin="0,0,0,4"/>
+
+            <TextBlock Grid.Row="1" Text="Panel de Administración del Directorio Comercial"
+                       HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+            <DataGrid Grid.Row="2" x:Name="ComercioTable" AutoGenerateColumns="False"
+                      IsReadOnly="True" Margin="0,0,0,20">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nombre" Width="200" Binding="{Binding Nombre}"/>
+                    <DataGridTextColumn Header="Rubro" Width="150" Binding="{Binding Rubro}"/>
+                    <DataGridTextColumn Header="Dirección" Width="200" Binding="{Binding Direccion}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button Grid.Row="3" x:Name="PrimaryButton" Content="Nuevo Comercio"
+                    HorizontalAlignment="Center" Padding="12,4"/>
+        </Grid>
+    </DockPanel>
+</Window>
