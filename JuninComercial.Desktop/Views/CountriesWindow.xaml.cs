@@ -10,6 +10,8 @@ namespace JuninComercial.Desktop.Views;
 /// </summary>
 public partial class CountriesWindow : Window
 {
+    private const string ErrorConexion = "Verificá la conexión con la base de datos e intentá de nuevo.";
+
     private readonly ObservableCollection<Country> _data = new();
     private readonly CountryRepository _repo = new();
 
@@ -53,22 +55,41 @@ public partial class CountriesWindow : Window
             return;
         }
 
+        var existe = _repo.Existe(selected.IdCountry);
+        var provincias = _repo.ContarProvincias(selected.IdCountry);
+
+        if (existe == null || provincias == null)
+        {
+            ShowError($"No se pudo verificar el país. {ErrorConexion}");
+            return;
+        }
+
+        if (existe == false)
+        {
+            ShowAlert($"\"{selected.Name}\" ya no existe (puede que otro usuario lo haya eliminado).");
+            LoadData();
+            return;
+        }
+
+        if (provincias > 0)
+        {
+            ShowAlert($"No se puede eliminar \"{selected.Name}\": tiene {provincias} provincia(s) asociada(s).");
+            return;
+        }
+
         var result = MessageBox.Show($"¿Eliminar \"{selected.Name}\"?", "Confirmar",
             MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-        if (result == MessageBoxResult.Yes)
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        if (!_repo.Eliminar(selected.IdCountry))
         {
-            if (_repo.Eliminar(selected.IdCountry))
-            {
-                LoadData();
-            }
-            else
-            {
-                MessageBox.Show(
-                    "No se pudo eliminar el país. Verificá la conexión con la base de datos e intentá de nuevo.",
-                    "Error al eliminar", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            ShowError($"No se pudo eliminar el país. {ErrorConexion}");
+            return;
         }
+
+        LoadData();
     }
 
     private void BtnVolver_Click(object sender, RoutedEventArgs e)
@@ -93,5 +114,10 @@ public partial class CountriesWindow : Window
     private static void ShowAlert(string msg)
     {
         MessageBox.Show(msg, "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
+    private static void ShowError(string msg)
+    {
+        MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 }

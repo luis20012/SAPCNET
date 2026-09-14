@@ -102,13 +102,10 @@ public class CountryRepository
         }
     }
 
-    /// <summary>
-    /// Valida unicidad de código (case-insensitive). Si hay error de conexión, devuelve
-    /// false (no bloquea el guardado acá; el Insertar/Actualizar posterior ya informa
-    /// el fallo real de base de datos al usuario).
-    /// </summary>
+    /// <summary>¿Hay otro país con este código (sin distinguir mayúsculas)?</summary>
     /// <param name="excludeId">Id a excluir de la comparación (el propio registro al editar).</param>
-    public bool ExisteCodigo(string codigo, int? excludeId)
+    /// <returns>null si hubo un error de base de datos (no se pudo verificar).</returns>
+    public bool? ExisteCodigo(string codigo, int? excludeId)
     {
         const string sql = """
             SELECT COUNT(*) FROM country
@@ -116,20 +113,63 @@ public class CountryRepository
               AND (@excludeId IS NULL OR id_country <> @excludeId)
             """;
 
+        return Contar(sql, "validar código de país",
+            ("@code", codigo), ("@excludeId", excludeId)) is long n ? n > 0 : null;
+    }
+
+    /// <summary>¿Hay otro país con este nombre (sin distinguir mayúsculas)?</summary>
+    /// <param name="excludeId">Id a excluir de la comparación (el propio registro al editar).</param>
+    /// <returns>null si hubo un error de base de datos (no se pudo verificar).</returns>
+    public bool? ExisteNombre(string nombre, int? excludeId)
+    {
+        const string sql = """
+            SELECT COUNT(*) FROM country
+            WHERE UPPER(name) = UPPER(@name)
+              AND (@excludeId IS NULL OR id_country <> @excludeId)
+            """;
+
+        return Contar(sql, "validar nombre de país",
+            ("@name", nombre), ("@excludeId", excludeId)) is long n ? n > 0 : null;
+    }
+
+    /// <summary>¿El país sigue existiendo? (por si otro usuario lo borró mientras la ventana estaba abierta)</summary>
+    /// <returns>null si hubo un error de base de datos (no se pudo verificar).</returns>
+    public bool? Existe(int idCountry)
+    {
+        const string sql = "SELECT COUNT(*) FROM country WHERE id_country = @id";
+
+        return Contar(sql, "validar existencia de país", ("@id", idCountry)) is long n ? n > 0 : null;
+    }
+
+    /// <summary>
+    /// ¿Hay provincias que apuntan a este país? Sin este control quedarían
+    /// provincias huérfanas al eliminar.
+    /// </summary>
+    /// <returns>Cantidad de provincias, o null si hubo un error de base de datos.</returns>
+    public long? ContarProvincias(int idCountry)
+    {
+        const string sql = "SELECT COUNT(*) FROM province WHERE id_country = @id";
+
+        return Contar(sql, "contar provincias del país", ("@id", idCountry));
+    }
+
+    private static long? Contar(string sql, string operacion, params (string Name, object? Value)[] parameters)
+    {
         try
         {
             using var conn = DatabaseConnectionFactory.Create();
             using var cmd = new MySqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@code", codigo);
-            cmd.Parameters.AddWithValue("@excludeId", (object?)excludeId ?? DBNull.Value);
+            foreach (var (name, value) in parameters)
+            {
+                cmd.Parameters.AddWithValue(name, value ?? DBNull.Value);
+            }
 
-            var count = Convert.ToInt64(cmd.ExecuteScalar());
-            return count > 0;
+            return Convert.ToInt64(cmd.ExecuteScalar());
         }
         catch (MySqlException e)
         {
-            System.Diagnostics.Debug.WriteLine($"Error al validar código de país: {e.Message}");
-            return false;
+            System.Diagnostics.Debug.WriteLine($"Error al {operacion}: {e.Message}");
+            return null;
         }
     }
 }
