@@ -1,0 +1,57 @@
+<Window x:Class="JuninComercial.Desktop.Views.DepartmentsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Departamentos" Height="600" Width="800">
+    <DockPanel Margin="20">
+        <!-- Equivalente a los Label/TextField de deparment.fxml -->
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="250"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Nombre" VerticalAlignment="Center"/>
+            <TextBox x:Name="TxtName" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" MaxLength="45"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="ZipCode" VerticalAlignment="Center"/>
+            <TextBox x:Name="TxtZipcode" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" MaxLength="4"
+                     PreviewTextInput="SoloDigitos_PreviewTextInput" DataObject.Pasting="SoloDigitos_Pasting"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Provincia" VerticalAlignment="Center"/>
+            <!-- Muestra el nombre de la provincia y guarda su id_province -->
+            <ComboBox x:Name="CmbProvince" Grid.Row="2" Grid.Column="1"
+                      DisplayMemberPath="Name" SelectedValuePath="IdProvince"/>
+        </Grid>
+
+        <!-- Equivalente a los Button Crear/Modificar/Eliminar/Limpiar de deparment.fxml -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,16">
+            <Button Content="Crear" Padding="12,4" Margin="0,0,10,0" Click="BtnCrear_Click"/>
+            <Button Content="Modificar" Padding="12,4" Margin="0,0,10,0" Click="BtnModificar_Click"/>
+            <Button Content="Eliminar" Padding="12,4" Margin="0,0,10,0" Click="BtnEliminar_Click"/>
+            <Button Content="Limpiar" Padding="12,4" Click="BtnLimpiar_Click"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Volver" Padding="12,4" Click="BtnVolver_Click"/>
+        </StackPanel>
+
+        <!-- Equivalente al TableView tableDepartment de deparment.fxml -->
+        <DataGrid x:Name="TableDepartment" AutoGenerateColumns="False" IsReadOnly="True"
+                  SelectionMode="Single" SelectionChanged="TableDepartment_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="80" Binding="{Binding IdDepartment}"/>
+                <DataGridTextColumn Header="Nombre" Width="250" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="ZipCode" Width="150" Binding="{Binding Zipcode}"/>
+                <DataGridTextColumn Header="Provincia" Width="150" Binding="{Binding ProvinciaDisplay}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

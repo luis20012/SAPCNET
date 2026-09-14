@@ -17,6 +17,7 @@
             </MenuItem>
             <MenuItem Header="_Mantenimiento">
                 <MenuItem Header="_Países" Click="MenuPaises_Click"/>
+                <MenuItem Header="_Departamentos" Click="MenuDepartamentos_Click"/>
             </MenuItem>
             <MenuItem Header="_Ayuda">
                 <MenuItem Header="_Acerca de"/>

@@ -15,11 +15,18 @@ public partial class MainWindow : Window
 
     private void MenuPaises_Click(object sender, RoutedEventArgs e)
     {
-        var countriesWindow = new CountriesWindow
-        {
-            Owner = this
-        };
+        // Sin Owner: en WPF, cerrar la ventana dueña cierra también las ventanas que posee,
+        // y acá se cierra MainWindow justo después de abrir Países.
+        var countriesWindow = new CountriesWindow();
         countriesWindow.Show();
+        Close();
+    }
+
+    private void MenuDepartamentos_Click(object sender, RoutedEventArgs e)
+    {
+        // Sin Owner: en WPF, cerrar la ventana dueña cierra también las ventanas que posee.
+        var departmentsWindow = new DepartmentsWindow();
+        departmentsWindow.Show();
         Close();
     }
 
