@@ -13,9 +13,11 @@ public static partial class CountryValidator
     public const int NombreMinLength = 2;
     public const int NombreMaxLength = 100;
 
-    // ISO 3166-1 alpha-2: exactamente 2 letras mayúsculas (AR, UY, BR, US...).
-    [GeneratedRegex("^[A-Z]{2}$")]
-    private static partial Regex CodigoIso2Regex();
+    public const int CodigoLength = 4;
+
+    // Exactamente 4 letras mayúsculas.
+    [GeneratedRegex("^[A-Z]{4}$")]
+    private static partial Regex CodigoRegex();
 
     // Letras (con acentos), espacios y . ' - ("Costa de Marfil", "Guinea-Bisáu", "St. Lucia").
     [GeneratedRegex(@"^[\p{L} .'\-]+$")]
@@ -55,9 +57,9 @@ public static partial class CountryValidator
         {
             errors.Add("El código es obligatorio.");
         }
-        else if (!CodigoIso2Regex().IsMatch(codigo))
+        else if (!CodigoRegex().IsMatch(codigo))
         {
-            errors.Add("El código debe tener exactamente 2 letras (formato ISO 3166-1 alpha-2, ej: AR, UY, BR).");
+            errors.Add($"El código debe tener exactamente {CodigoLength} letras.");
         }
 
         return new Result(errors, nombre, codigo);

@@ -23,7 +23,7 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Código:" VerticalAlignment="Center"/>
             <TextBox x:Name="TxtCodigo" Grid.Row="1" Grid.Column="1" MaxWidth="80" HorizontalAlignment="Left"
-                     MaxLength="2" CharacterCasing="Upper"/>
+                     MaxLength="4" CharacterCasing="Upper"/>
         </Grid>
 
         <!-- Equivalente al HBox de botones de countryForm.fxml -->
