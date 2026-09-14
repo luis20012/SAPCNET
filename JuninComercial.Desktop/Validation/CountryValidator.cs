@@ -13,10 +13,11 @@ public static partial class CountryValidator
     public const int NombreMinLength = 2;
     public const int NombreMaxLength = 100;
 
-    public const int CodigoLength = 4;
+    public const int CodigoMinLength = 2;
+    public const int CodigoMaxLength = 10;
 
-    // Exactamente 4 letras mayúsculas.
-    [GeneratedRegex("^[A-Z]{4}$")]
+    // Entre 2 y 10 letras mayúsculas (AR, ARG, ARGENTINA...).
+    [GeneratedRegex("^[A-Z]{2,10}$")]
     private static partial Regex CodigoRegex();
 
     // Letras (con acentos), espacios y . ' - ("Costa de Marfil", "Guinea-Bisáu", "St. Lucia").
@@ -59,7 +60,7 @@ public static partial class CountryValidator
         }
         else if (!CodigoRegex().IsMatch(codigo))
         {
-            errors.Add($"El código debe tener exactamente {CodigoLength} letras.");
+            errors.Add($"El código debe tener entre {CodigoMinLength} y {CodigoMaxLength} letras (sin números ni símbolos).");
         }
 
         return new Result(errors, nombre, codigo);
